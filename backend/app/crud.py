@@ -26,7 +26,7 @@ def delete_data(db: Session, db_data: Product):
 def get_data_by_id(db: Session, id: int):
     return db.query(Product).filter(Product.id == id).first()
 
-@router.get("/product", dependencies=[Depends(authenticate_token)])
+@router.post("/product", dependencies=[Depends(authenticate_token)])
 async def get_product(db: Session = Depends(get_db)):
     data = db.query(Product).all()
     return {"product": data}
