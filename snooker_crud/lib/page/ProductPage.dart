@@ -31,110 +31,92 @@ class _ProductPageState extends State<ProductPage> {
     String authorization = widget.token;
     Map<String, String> headersToken = {
       "Authorization": "Bearer $authorization"
-
     };
     setState(() {
       loading = true;
     });
     try {
       final dashboard = await http.post(
-        Uri.parse('${ServerConfig.url}/api/crud/product'),
-        headers: headersToken);
-    if (dashboard.statusCode == 200) {
-      setState(() {
-        String data = utf8.decode(dashboard.bodyBytes);
-        productData = productFromJson(data);
-        loading = false;
-      });
-    } else {
-      setState(() {
-        loading = true;
-      });
-    }
-    } catch (e) {
-
-    }
-    
+          Uri.parse('${ServerConfig.url}/api/crud/product'),
+          headers: headersToken);
+      if (dashboard.statusCode == 200) {
+        setState(() {
+          String data = utf8.decode(dashboard.bodyBytes);
+          productData = productFromJson(data);
+          loading = false;
+        });
+      } else {
+        setState(() {
+          loading = true;
+        });
+      }
+    } catch (e) {}
   }
 
   addOk() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.success,
-      title: 'เพิ่มข้อมูลสำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.success,
+            title: 'เพิ่มข้อมูลสำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   addErorr() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.error,
-      title: 'เพิ่มข้อมูลไม่สำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.error,
+            title: 'เพิ่มข้อมูลไม่สำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   updateOk() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.success,
-      title: 'แก้ไขสำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.success,
+            title: 'แก้ไขสำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   updateErorr() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.error,
-      title: 'แก้ไขไม่สำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.error,
+            title: 'แก้ไขไม่สำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   deleteOk() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.success,
-      title: 'ลบข้อมูลสำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.success,
+            title: 'ลบข้อมูลสำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   deleteErorr() {
     AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.error,
-      title: 'ลบข้อมูลไม่สำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
-  }
-
-  sumMoneyOk(String money) {
-    AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.success,
-      title: 'ยอดคือ $money บาท',
-      btnOkOnPress: () {},
-    ).show();
-  }
-
-  sumMoneyErorr() {
-    AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      dialogType: DialogType.error,
-      title: 'เคลียยอดไม่สำเร็จ',
-      btnOkOnPress: () {},
-    ).show();
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.error,
+            title: 'ลบข้อมูลไม่สำเร็จ',
+            btnOkOnPress: () {},
+            width: 500)
+        .show();
   }
 
   void deleteData(int index, int id) {
@@ -152,16 +134,20 @@ class _ProductPageState extends State<ProductPage> {
                   "Authorization": "Bearer $authorization"
                 };
 
-                final updatedata = await http.delete(
-                    Uri.parse(
-                        '${ServerConfig.url}/api/crud/delete/$id'),
-                    headers: headersToken);
+                try {
+                  final updatedata = await http.delete(
+                      Uri.parse('${ServerConfig.url}/api/crud/delete/$id'),
+                      headers: headersToken);
 
-                if (updatedata.statusCode == 200) {
-                  productGetData();
-                  Navigator.of(context).pop();
-                  deleteOk();
-                } else {
+                  if (updatedata.statusCode == 200) {
+                    productGetData();
+                    Navigator.of(context).pop();
+                    deleteOk();
+                  } else {
+                    Navigator.of(context).pop();
+                    deleteErorr();
+                  }
+                } catch (e) {
                   Navigator.of(context).pop();
                   deleteErorr();
                 }
@@ -194,6 +180,9 @@ class _ProductPageState extends State<ProductPage> {
       controller: tableController,
       showFirstLastButtons: true,
       rowsPerPage: _rowsPerPage,
+      dataRowMinHeight: 30,
+      dataRowMaxHeight: 200, 
+      columnSpacing: 20, 
       availableRowsPerPage: const <int>[5, 10, 15, 20, 50, 100, 150],
       onPageChanged: (value) => productData!.product.length / _rowsPerPage,
       onRowsPerPageChanged: (value) {
@@ -209,6 +198,7 @@ class _ProductPageState extends State<ProductPage> {
           required String product_name,
           required String product_details,
           required String product_type,
+          required String imgUrl,
         }) {
           return showDialog(
               context: context,
@@ -216,6 +206,7 @@ class _ProductPageState extends State<ProductPage> {
                 return UpdateDialog(
                   productDetails: product_details,
                   productName: product_name,
+                  imgUrl: imgUrl,
                   productPrice: product_price,
                   productType: product_type,
                   token: widget.token,
@@ -269,6 +260,15 @@ class _ProductPageState extends State<ProductPage> {
         )),
         DataColumn(
             label: Text(
+          'รูป',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Kanit',
+          ),
+        )),
+        DataColumn(
+            label: Text(
           'ราคาสินค้า',
           style: TextStyle(
             fontSize: 18,
@@ -293,7 +293,7 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-       productGetData();
+      productGetData();
     });
   }
 
@@ -377,7 +377,7 @@ class _ProductPageState extends State<ProductPage> {
                               );
                             },
                             icon: const Icon(
-                              Icons.person_add_rounded,
+                              Icons.add,
                               color: Colors.blue,
                               size: 40,
                             )),

@@ -13,6 +13,8 @@ class Product(Base):
     __tablename__ ="product"
     id = Column(Integer,primary_key=True)
     product_name = Column(String)
+    img_url = Column(String)
     product_type = Column(String)
     product_price = Column(Double)
     product_details = Column(String)
+    

@@ -10,6 +10,7 @@ class UpdateDialog extends StatefulWidget {
   final int id;
   final double productPrice;
   final String productName;
+  final String imgUrl;
   final String productDetails;
   final String productType;
   final String token;
@@ -24,21 +25,20 @@ class UpdateDialog extends StatefulWidget {
     required this.productDetails,
     required this.productType,
     required this.token,
+    required this.imgUrl,
   });
 
   @override
-  State<UpdateDialog> createState() =>
-      _UpdateDialogState();
+  State<UpdateDialog> createState() => _UpdateDialogState();
 }
 
-class _UpdateDialogState
-    extends State<UpdateDialog> {
+class _UpdateDialogState extends State<UpdateDialog> {
   TextEditingController idController = TextEditingController();
   TextEditingController productPriceController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
   TextEditingController productDetailsController = TextEditingController();
   TextEditingController productTypeController = TextEditingController();
-
+  TextEditingController imgUrlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     idController.text = widget.id.toString();
@@ -46,7 +46,7 @@ class _UpdateDialogState
     productNameController.text = widget.productName;
     productDetailsController.text = widget.productDetails;
     productTypeController.text = widget.productType;
-
+    imgUrlController.text = widget.imgUrl;
     return AlertDialog(
       actions: [
         ElevatedButton(
@@ -64,27 +64,30 @@ class _UpdateDialogState
               "product_name": productNameController.text,
               "product_details": productDetailsController.text,
               "product_type": productTypeController.text,
-              
+              "img_url": imgUrlController.text
             });
-            final updatedata = await http.put(
-                Uri.parse(
-                    '${ServerConfig.url}/api/crud/update/${widget.id}'),
+            
+            try {
+              final updatedata = await http.put(
+                Uri.parse('${ServerConfig.url}/api/crud/update/${widget.id}'),
                 headers: headersToken,
                 body: body);
-
-            if (updatedata.statusCode == 200) {
-              bool reload = true;
-              Navigator.of(context).pop();
-              setState(() {
-                widget.getReload!(reload);
+              if (updatedata.statusCode == 200) {
+                bool reload = true;
+                Navigator.of(context).pop();
+                setState(() {
+                  widget.getReload!(reload);
+                  widget.getDialog!(reload);
+                });
+              } else {
+                bool reload = false;
+                Navigator.of(context).pop();
                 widget.getDialog!(reload);
-              });
-            } else {
+              }
+            } catch (e) {
               bool reload = false;
               Navigator.of(context).pop();
-              setState(() {
-                widget.getDialog!(reload);
-              });
+              widget.getDialog!(reload);
             }
           },
         ),
@@ -122,6 +125,12 @@ class _UpdateDialogState
               ),
             ),
             TextFormField(
+              controller: imgUrlController,
+              decoration: const InputDecoration(
+                labelText: "รูป",
+              ),
+            ),
+            TextFormField(
               controller: productPriceController,
               decoration: const InputDecoration(
                 labelText: "ราคาสินค้า",
@@ -133,7 +142,6 @@ class _UpdateDialogState
                 labelText: "รายละเอียดเพิ่มเติม",
               ),
             ),
-           
           ],
         ),
       )),

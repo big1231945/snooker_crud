@@ -18,5 +18,5 @@ def hello():
 
 
 if __name__ == "__main__":
-    uvicorn.run(port=80, reload=True)
-    # uvicorn main:app --port 80 --reload
+    uvicorn.run(app=app, port=8080)
+    # uvicorn main:app --port 8080 --reload

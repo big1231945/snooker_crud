@@ -24,6 +24,7 @@ class ProductElement {
     double productPrice;
     int id;
     String productName;
+    String imgUrl;
     String productDetails;
     String productType;
 
@@ -31,6 +32,7 @@ class ProductElement {
         required this.productPrice,
         required this.id,
         required this.productName,
+        required this.imgUrl,
         required this.productDetails,
         required this.productType,
     });
@@ -39,6 +41,7 @@ class ProductElement {
         productPrice: json["product_price"],
         id: json["id"],
         productName: json["product_name"],
+        imgUrl: json["img_url"],
         productDetails: json["product_details"],
         productType: json["product_type"],
     );
@@ -47,6 +50,7 @@ class ProductElement {
         "product_price": productPrice,
         "id": id,
         "product_name": productName,
+        "img_url": imgUrl,
         "product_details": productDetails,
         "product_type": productType,
     };

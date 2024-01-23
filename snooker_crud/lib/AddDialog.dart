@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import '../ServerConfig.dart';
 
 class AddDialog extends StatefulWidget {
-
   final String token;
   final Function(bool reload)? getReload;
   final Function(bool reload)? getDialog;
@@ -25,7 +24,7 @@ class _AddDialogState extends State<AddDialog> {
   TextEditingController productNameController = TextEditingController();
   TextEditingController productDetailsController = TextEditingController();
   TextEditingController productTypeController = TextEditingController();
-
+  TextEditingController imgUrlController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,27 +43,30 @@ class _AddDialogState extends State<AddDialog> {
               "product_name": productNameController.text,
               "product_details": productDetailsController.text,
               "product_type": productTypeController.text,
-              
+              "img_url": imgUrlController.text
             });
-            final updatedata = await http.post(
-                Uri.parse(
-                    '${ServerConfig.url}/api/crud/add'),
-                headers: headersToken,
-                body: body);
+            try {
+              final updatedata = await http.post(
+                  Uri.parse('${ServerConfig.url}/api/crud/add'),
+                  headers: headersToken,
+                  body: body);
 
-            if (updatedata.statusCode == 200) {
-              bool reload = true;
-              Navigator.of(context).pop();
-              setState(() {
-                widget.getReload!(reload);
+              if (updatedata.statusCode == 200) {
+                bool reload = true;
+                Navigator.of(context).pop();
+                setState(() {
+                  widget.getReload!(reload);
+                  widget.getDialog!(reload);
+                });
+              } else {
+                bool reload = false;
+                Navigator.of(context).pop();
                 widget.getDialog!(reload);
-              });
-            } else {
+              }
+            } catch (e) {
               bool reload = false;
               Navigator.of(context).pop();
-              setState(() {
-                widget.getDialog!(reload);
-              });
+              widget.getDialog!(reload);
             }
           },
         ),
@@ -95,6 +97,12 @@ class _AddDialogState extends State<AddDialog> {
               ),
             ),
             TextFormField(
+              controller: imgUrlController,
+              decoration: const InputDecoration(
+                labelText: "รูป",
+              ),
+            ),
+            TextFormField(
               controller: productPriceController,
               decoration: const InputDecoration(
                 labelText: "ราคาสินค้า",
@@ -106,7 +114,6 @@ class _AddDialogState extends State<AddDialog> {
                 labelText: "รายละเอียดเพิ่มเติม",
               ),
             ),
-           
           ],
         ),
       )),
